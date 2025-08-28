@@ -13,9 +13,9 @@ const agents: AIAgent[] = [
     description: 'Helps with programming questions, code reviews, and technical explanations',
     icon: '💻',
     color: 'bg-purple-500',
-    // systemPrompt: 'Answer coding questions briefly and clearly. Show only essential code.'
+    systemPrompt: 'Answer coding questions briefly and clearly. Show only essential code and clean explanations.'
 
-    systemPrompt: 'You are an expert software engineer specializing in Coding. Help users with code examples, clear explanations, and best practices.'
+    // systemPrompt: 'You are an expert computer science engineer specializing in Coding. Help users with code examples, clear explanations, and best practices.'
   },
   {
     id: '2',
