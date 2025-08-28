@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect, ComponentProps } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Message, AIAgent } from '@/app/types';
 import { Button } from './ui/button';
 import { Send, Loader2 } from 'lucide-react';
-import ReactMarkdown, { ExtraProps } from 'react-markdown';
+
+import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+  
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
 
 interface ChatInterfaceProps {
   agent: AIAgent | null;
@@ -150,46 +152,19 @@ export function ChatInterface({ agent }: ChatInterfaceProps) {
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      code({
-                         inline,
-                        className,
-                        children,
-                        ...props
-                      }: ComponentProps<'code'> &
-                        ExtraProps & { inline?: boolean }) {
+                      code({ inline, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className || '');
-                        const language = match ? match[1] : '';
-
-                        if (!inline && language) {
-                          return (
-                            <SyntaxHighlighter
-                              style={oneDark as { [key: string]: React.CSSProperties }}
-                              language={language}
-                              PreTag="div"
-                              wrapLongLines={true}
-                              {...props}
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          );
-                        }
-
-                        if (inline) {
-                          return (
-                            <code
-                              className="bg-gray-800 text-pink-400 px-1 py-0.5 rounded font-mono text-[0.85em]"
-                              {...props}
-                            >
-                              {children}
-                            </code>
-                          );
-                        }
-
-                        return (
-                          <code
-                            className="bg-gray-200 px-1 rounded font-mono text-sm"
+                        return !inline && match ? (
+                          <SyntaxHighlighter
+                            style={oneDark}
+                            language={match[1]}
+                            PreTag="div"
                             {...props}
                           >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        ) : (
+                          <code className="bg-gray-200 px-1 rounded" {...props}>
                             {children}
                           </code>
                         );
@@ -207,9 +182,7 @@ export function ChatInterface({ agent }: ChatInterfaceProps) {
               <div className="flex justify-between mt-1 text-xs">
                 <span
                   className={
-                    message.role === 'user'
-                      ? 'text-blue-200'
-                      : 'text-gray-500'
+                    message.role === 'user' ? 'text-blue-200' : 'text-gray-500'
                   }
                 >
                   {new Date(message.timestamp).toLocaleTimeString()}
@@ -234,7 +207,7 @@ export function ChatInterface({ agent }: ChatInterfaceProps) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Type your message..."
             className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
